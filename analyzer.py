@@ -24,3 +24,17 @@ def lowest_demand_product(orders):
         return None
     return demand.idxmin(), demand.min()
 
+def monthly_demand(orders):
+    orders = orders.copy()
+
+    orders["Date"] = pd.to_datetime(orders["Date"],format="%d-%m-%Y")
+    monthly = orders.groupby(orders["Date"].dt.to_period("M"))["Quantity"].sum()
+    return monthly
+
+def compare_products(orders, product1, product2):
+    demand = product_demand(orders)
+
+    demand1 = demand.get(product1,0)
+    demand2 = demand.get(product2,0)
+
+    return demand1, demand2

@@ -18,7 +18,9 @@ from analyzer import (
     avg_demand,
     product_demand,
     highest_demand_product,
-    lowest_demand_product
+    lowest_demand_product,
+    monthly_demand,
+    compare_products
 )
 
 
@@ -41,3 +43,9 @@ print(highest_demand_product(orders))
 
 print("\nLOWEST DEMAND PRODUCT:")
 print(lowest_demand_product(orders))
+
+print("\nMONTHLY DEMAND:")
+print(monthly_demand(orders))
+
+print("\nRICE VS MILK:")
+print(compare_products(orders, "Rice", "Milk"))
