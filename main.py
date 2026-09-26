@@ -27,7 +27,7 @@ from data_manager import load_orders,add_order
 #     filter_orders
 # )
 import tkinter as tk
-
+from tkinter import ttk
 
 # orders = load_orders()
 
@@ -83,6 +83,7 @@ def add_order_from_gui():
         category,
         quantity
     )
+    load_table()
 
 window = tk.Tk()
 window.title("Retail Product Demand Analyzer")
@@ -124,4 +125,41 @@ quantity_entry.pack(pady = 5)
 
 add_button = tk.Button(window, text = "Add order", command=add_order_from_gui)
 add_button.pack(pady = 15)
+
+#orders table
+table = ttk.Treeview(
+    window, 
+    columns = ("ID", "Date", "Product", "Category", "Quantity"),
+    show="headings"
+)
+
+table.heading("ID", text = "Order ID")
+table.heading("Date", text = "Date")
+table.heading("Product", text = "Product")
+table.heading("Category", text = "Category")
+table.heading("Quantity", text = "Quantity")
+
+table.pack(pady=20, padx=20, fill="both", expand=True)
+
+def load_table():
+    orders = load_orders()
+
+    # Remove old rows
+    for row in table.get_children():
+        table.delete(row)
+
+    # Add orders to table
+    for _, order in orders.iterrows():
+        table.insert(
+            "",
+            "end",
+            values=(
+                order["Order_ID"],
+                order["Date"],
+                order["Product"],
+                order["Category"],
+                order["Quantity"]
+            )
+        )
+load_table()
 window.mainloop()
