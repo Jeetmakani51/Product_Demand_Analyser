@@ -20,7 +20,11 @@ from analyzer import (
     highest_demand_product,
     lowest_demand_product,
     monthly_demand,
-    compare_products
+    compare_products,
+    search_product,
+    filter_category,
+    filter_date,
+    filter_orders
 )
 
 
@@ -49,3 +53,19 @@ print(monthly_demand(orders))
 
 print("\nRICE VS MILK:")
 print(compare_products(orders, "Rice", "Milk"))
+
+print("SEARCH FOR RICE")
+print(search_product(orders, "Rice"))
+
+print("\nFILTER BY GROCERY CATEGORY")
+print(filter_category(orders, "Grocery"))
+
+print("\nFILTER BY DATE")
+print(filter_date(orders, "05-09-2026"))
+
+print("\nRICE + GROCERY")
+print(filter_orders(
+    orders,
+    product="Rice",
+    category="Grocery"
+))

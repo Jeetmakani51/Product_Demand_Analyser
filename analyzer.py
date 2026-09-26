@@ -38,3 +38,47 @@ def compare_products(orders, product1, product2):
     demand2 = demand.get(product2,0)
 
     return demand1, demand2
+
+def search_product(orders, product_name):
+    result = orders[
+        orders["Product"].str.contains(
+            product_name,
+            case=False, #not case sensitive ex rice and Rice
+            na=False
+        )
+    ]
+    return result
+
+def filter_category(orders,category):
+    result = orders[
+        orders["Category"].str.contains(
+            category,
+            case=False,
+            na=False
+        )
+    ]
+    return result
+
+def filter_date(orders,date):
+    result = orders[orders["Date"] == date]
+    return result
+
+def filter_orders(orders, product = "", category = ""):
+    result = orders.copy()
+    if product:
+        result = result[
+            result["Product"].str.contains(
+                product,
+                case = False,
+                na = False
+            )
+        ]
+    if category:
+        result = result[
+            result["Category"].str.contains(
+                category,
+                case = False,
+                na = False
+            )
+        ]
+    return result
