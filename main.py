@@ -13,19 +13,19 @@
 
 
 from data_manager import load_orders,add_order
-# from analyzer import (
-#     total_demand,
-#     avg_demand,
-#     product_demand,
-#     highest_demand_product,
-#     lowest_demand_product,
-#     monthly_demand,
-#     compare_products,
-#     search_product,
-#     filter_category,
-#     filter_date,
-#     filter_orders
-# )
+from analyzer import (
+    total_demand,
+    avg_demand,
+    product_demand,
+    highest_demand_product,
+    lowest_demand_product,
+    monthly_demand,
+    compare_products,
+    search_product,
+    filter_category,
+    filter_date,
+    filter_orders
+)
 import tkinter as tk
 from tkinter import ttk
 
@@ -75,15 +75,41 @@ def add_order_from_gui():
     product = product_entry.get()
     category = category_entry.get()
     date = date_entry.get()
-    quantity = int(quantity_entry.get())
+    quantity_text = quantity_entry.get()
 
-    add_order(
-        date,
-        product,
-        category,
-        quantity
-    )
-    load_table()
+    try:
+        # Check empty fields
+        if product == "" or category == "" or date == "" or quantity_text == "":
+            print("Please fill all fields.")
+            return
+
+        # Convert quantity to integer
+        quantity = int(quantity_text)
+
+        # Check positive quantity
+        if quantity <= 0:
+            print("Quantity must be greater than 0.")
+            return
+
+        add_order(
+            date,
+            product,
+            category,
+            quantity
+        )
+
+        load_table()
+
+        # Clear fields
+        product_entry.delete(0, tk.END)
+        category_entry.delete(0, tk.END)
+        date_entry.delete(0, tk.END)
+        quantity_entry.delete(0, tk.END)
+
+        print("Order added successfully.")
+
+    except ValueError:
+        print("Quantity must be a number.")
 
 window = tk.Tk()
 window.title("Retail Product Demand Analyzer")
@@ -126,6 +152,105 @@ quantity_entry.pack(pady = 5)
 add_button = tk.Button(window, text = "Add order", command=add_order_from_gui)
 add_button.pack(pady = 15)
 
+#category
+category_filter_label = tk.Label(
+    window,
+    text="Filter Category:"
+)
+
+category_filter_label.pack()
+
+category_filter_entry = tk.Entry(
+    window,
+    width=30
+)
+
+category_filter_entry.pack(pady=5)
+
+def filter_category_orders():
+    category = category_filter_entry.get()
+
+    orders = load_orders()
+
+    result = filter_category(
+        orders,
+        category
+    )
+
+    # Clear table
+    for row in table.get_children():
+        table.delete(row)
+
+    # Display filtered results
+    for _, order in result.iterrows():
+        table.insert(
+            "",
+            "end",
+            values=(
+                order["Order_ID"],
+                order["Date"],
+                order["Product"],
+                order["Category"],
+                order["Quantity"]
+            )
+        )
+
+filter_button = tk.Button(
+    window,
+    text="Filter",
+    command=filter_category_orders
+)
+
+filter_button.pack(pady=5)
+
+#search
+search_label = tk.Label(
+    window, text = "Search Product:"
+)
+
+search_label.pack()
+search_entry = tk.Entry(
+    window,
+    width=30
+)
+search_entry.pack(pady=5)
+
+def search_orders():
+    product_name = search_entry.get()
+
+    orders = load_orders()
+
+    result = search_product(
+        orders,
+        product_name
+    )
+
+    # Clear table
+    for row in table.get_children():
+        table.delete(row)
+
+    # Display search results
+    for _, order in result.iterrows():
+        table.insert(
+            "",
+            "end",
+            values=(
+                order["Order_ID"],
+                order["Date"],
+                order["Product"],
+                order["Category"],
+                order["Quantity"]
+            )
+        )
+
+search_button = tk.Button(
+    window,
+    text="Search",
+    command=search_orders
+)
+
+search_button.pack(pady=5)
+
 #orders table
 table = ttk.Treeview(
     window, 
@@ -140,6 +265,7 @@ table.heading("Category", text = "Category")
 table.heading("Quantity", text = "Quantity")
 
 table.pack(pady=20, padx=20, fill="both", expand=True)
+
 
 def load_table():
     orders = load_orders()
@@ -161,5 +287,12 @@ def load_table():
                 order["Quantity"]
             )
         )
-load_table()
+show_all_button = tk.Button(
+    window,
+    text="Show All",
+    command = load_table
+)
+
+show_all_button.pack(pady=5)
+
 window.mainloop()
