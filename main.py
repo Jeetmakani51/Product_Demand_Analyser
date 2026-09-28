@@ -329,6 +329,42 @@ analysis_button = tk.Button(
     command = show_demand_analysis
 )
 
+def show_product_demand():
+    orders = load_orders()
+
+    if orders.empty:
+        messagebox.showinfo(
+            "Product Demand",
+            "No orders available."
+        )
+        return
+
+    demand = product_demand(orders)
+
+    for row in table.get_children():
+        table.delete(row)
+
+    for product, quantity in demand.items():
+        table.insert(
+            "",
+            "end",
+            values = (
+                "",
+                "",
+                product,
+                "",
+                quantity
+            )
+        )
+
+product_demand_button = tk.Button(
+    window,
+    text="Product Demand",
+    command=show_product_demand
+)
+
+product_demand_button.pack(pady=5)
+
 analysis_button.pack(pady = 10)
 show_all_button.pack(pady=5)
 
