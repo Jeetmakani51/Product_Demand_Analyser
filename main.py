@@ -27,7 +27,7 @@ from analyzer import (
     filter_orders
 )
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 
 # orders = load_orders()
 
@@ -293,6 +293,43 @@ show_all_button = tk.Button(
     command = load_table
 )
 
+def show_demand_analysis():
+    orders = load_orders()
+
+    if orders.empty:
+        messagebox.showinfo(
+            "Demand Analysis",
+            "No orders available."
+        )
+        return
+
+    total = total_demand(orders)
+    average = avg_demand(orders)
+
+    heighest = highest_demand_product(orders)
+    lowest = lowest_demand_product(orders)
+
+    message = (
+        f"Total Demand : {total}\n"
+        f"Average Demand : {average: .2f}\n\n"
+        f"Highest Demand Product : {heighest[0]}\n"
+        f"Highest Demand : {heighest[1]}\n\n"
+        f"Lowest Demand Product : {lowest[0]}\n"
+        f"Lowest Demand : {lowest[1]}\n"
+    )
+
+    messagebox.showinfo(
+        "Demand Analysis",
+        message
+    )
+
+analysis_button = tk.Button(
+    window,
+    text = "Show Demmand Analysis",
+    command = show_demand_analysis
+)
+
+analysis_button.pack(pady = 10)
 show_all_button.pack(pady=5)
 
 window.mainloop()
