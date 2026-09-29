@@ -113,7 +113,7 @@ def add_order_from_gui():
 
 window = tk.Tk()
 window.title("Retail Product Demand Analyzer")
-window.geometry("800x600")
+window.geometry("2000x1500")
 title = tk.Label(
     window,
     text = "Retail Product Demand Analyzer",
@@ -251,6 +251,77 @@ search_button = tk.Button(
 
 search_button.pack(pady=5)
 
+#comparison
+def show_product_comparison():
+    orders = load_orders()
+
+    if orders.empty:
+        messagebox.showinfo(
+            "Product Comparison",
+            "No orders available."
+        )
+        return
+
+    product1 = product1_entry.get()
+    product2 = product2_entry.get()
+
+    if product1 == "" or product2 == "":
+        messagebox.showwarning(
+            "Input Required",
+            "Please enter both product names."
+        )
+        return
+
+    demand1, demand2 = compare_products(
+        orders,
+        product1,
+        product2
+    )
+
+    message = (
+        f"{product1} Demand : {demand1}\n"
+        f"{product2} Demand : {demand2}"
+    )
+
+    messagebox.showinfo(
+        "Product Comparison",
+        message
+    )
+
+product1_label = tk.Label(
+    window,
+    text="Product 1:"
+)
+product1_label.pack()
+
+product1_entry = tk.Entry(
+    window,
+    width=30
+)
+product1_entry.pack(pady=5)
+
+
+product2_label = tk.Label(
+    window,
+    text="Product 2:"
+)
+product2_label.pack()
+
+product2_entry = tk.Entry(
+    window,
+    width=30
+)
+product2_entry.pack(pady=5)
+
+
+compare_button = tk.Button(
+    window,
+    text="Compare Products",
+    command=show_product_comparison
+)
+
+compare_button.pack(pady=5)
+
 #orders table
 table = ttk.Treeview(
     window, 
@@ -329,6 +400,7 @@ analysis_button = tk.Button(
     command = show_demand_analysis
 )
 
+#product demand
 def show_product_demand():
     orders = load_orders()
 
@@ -356,6 +428,34 @@ def show_product_demand():
                 quantity
             )
         )
+
+#monthly demand
+def show_monthly_demand():
+    orders = load_orders()
+    if orders.empty:
+        messagebox.showinfo(
+            "Monthly Demand",
+            "No orders available"
+        )
+        return
+
+    monthly = monthly_demand(orders)
+    message = "Monthly Demand\n\n"
+
+    for month, quantity in monthly.items():
+        message += f"{month} : {quantity}\n"
+
+    messagebox.showinfo(
+        "Monthly Demand",
+        message
+    )
+
+monthly_button = tk.Button(
+    window,
+    text = "Monthly Demand",
+    command = show_monthly_demand
+)
+monthly_button.pack(pady=5)
 
 product_demand_button = tk.Button(
     window,
