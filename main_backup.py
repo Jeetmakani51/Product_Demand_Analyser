@@ -152,84 +152,47 @@ title = tk.Label(
 )
 title.pack(pady=20)
 
-# Main sections
-
-top_frame = tk.Frame(window)
-top_frame.pack(pady=10)
-
-order_frame = tk.LabelFrame(
-    top_frame,
-    text="Add Order",
-    padx=20,
-    pady=10
-)
-order_frame.pack(side="left", padx=20)
-
-search_frame = tk.LabelFrame(
-    top_frame,
-    text="Search & Filter",
-    padx=20,
-    pady=10
-)
-search_frame.pack(side="left", padx=20)
-
-analysis_frame = tk.LabelFrame(
-    window,
-    text="Analysis & Reports",
-    padx=20,
-    pady=10
-)
-analysis_frame.pack(pady=10)
-
-table_frame = tk.Frame(window)
-table_frame.pack(
-    padx=20,
-    pady=10,
-    fill="both",
-    expand=True
-)
-
 #product
-product_label = tk.Label(order_frame, text="Product: ")
+product_label = tk.Label(window, text="Product: ")
 product_label.pack()
 
-product_entry = tk.Entry(order_frame, width = "40")
+product_entry = tk.Entry(window, width = "40")
 product_entry.pack(pady = 5)
 
 #category
-category_label = tk.Label(order_frame, text = "Category: ")
+category_label = tk.Label(window, text = "Category: ")
 category_label.pack()
 
-category_entry = tk.Entry(order_frame, width = "40")
+category_entry = tk.Entry(window, width = "40")
 category_entry.pack(pady = 5)
 
 #date
-date_label = tk.Label(order_frame, text = "Date(DD/MM/YY): ")
+date_label = tk.Label(window, text = "Date(DD/MM/YY): ")
 date_label.pack()
 
-date_entry = tk.Entry(order_frame, width = "40")
+date_entry = tk.Entry(window, width = "40")
 date_entry.pack(pady = 5)
 
 #quantity
-quantity_label = tk.Label(order_frame, text = "Quantity: ")
+quantity_label = tk.Label(window, text = "Quantity: ")
 quantity_label.pack()
 
-quantity_entry = tk.Entry(order_frame, width = "40")
+quantity_entry = tk.Entry(window, width = "40")
 quantity_entry.pack(pady = 5)
 
-add_button = tk.Button(order_frame, text = "Add order", command=add_order_from_gui)
+add_button = tk.Button(window, text = "Add order", command=add_order_from_gui)
 add_button.pack(pady = 15)
 
 #category
 category_filter_label = tk.Label(
-    search_frame,
+    window,
     text="Filter Category:"
 )
 
 category_filter_label.pack()
 
 category_filter_entry = tk.Entry(
-    search_frame,
+    window,
     width=30
 )
 
@@ -264,7 +227,7 @@ def filter_category_orders():
         )
 
 filter_button = tk.Button(
-    search_frame,
+    window,
     text="Filter",
     command=filter_category_orders
 )
@@ -273,12 +236,12 @@ filter_button.pack(pady=5)
 
 #search
 search_label = tk.Label(
-    search_frame, text = "Search Product:"
+    window, text = "Search Product:"
 )
 
 search_label.pack()
 search_entry = tk.Entry(
-    search_frame,
+    window,
     width=30
 )
 search_entry.pack(pady=5)
@@ -312,7 +275,7 @@ def search_orders():
         )
 
 search_button = tk.Button(
-    search_frame,
+    window,
     text="Search",
     command=search_orders
 )
@@ -382,33 +345,33 @@ def show_monthly_chart():
     monthly_demand_chart(orders)
 
 product1_label = tk.Label(
-    analysis_frame,
+    window,
     text="Product 1:"
 )
 product1_label.pack()
 
 product1_entry = tk.Entry(
-    analysis_frame,
+    window,
     width=30
 )
 product1_entry.pack(pady=5)
 
 
 product2_label = tk.Label(
-    analysis_frame,
+    window,
     text="Product 2:"
 )
 product2_label.pack()
 
 product2_entry = tk.Entry(
-    analysis_frame,
+    window,
     width=30
 )
 product2_entry.pack(pady=5)
 
 
 compare_button = tk.Button(
-    analysis_frame,
+    window,
     text="Compare Products",
     command=show_product_comparison
 )
@@ -416,24 +379,24 @@ compare_button = tk.Button(
 compare_button.pack(pady=5)
 
 product_chart_button = tk.Button(
-    analysis_frame,
+    window,
     text="Product Demand Chart",
     command=show_product_chart
 )
 
-product_chart_button.pack(side = "left", padx=5)
+product_chart_button.pack(pady=5)
 
 
 monthly_chart_button = tk.Button(
-    analysis_frame,
+    window,
     text="Monthly Demand Chart",
     command=show_monthly_chart
 )
 
-monthly_chart_button.pack(side = "left", padx=5)
+monthly_chart_button.pack(pady=5)
 #orders table
 table = ttk.Treeview(
-    table_frame, 
+    window, 
     columns = ("ID", "Date", "Product", "Category", "Quantity"),
     show="headings"
 )
@@ -444,7 +407,7 @@ table.heading("Product", text = "Product")
 table.heading("Category", text = "Category")
 table.heading("Quantity", text = "Quantity")
 
-table.pack(fill="both", expand=True)
+table.pack(pady=20, padx=20, fill="both", expand=True)
 
 
 def load_table():
@@ -468,7 +431,7 @@ def load_table():
             )
         )
 show_all_button = tk.Button(
-    analysis_frame,
+    window,
     text="Show All",
     command = load_table
 )
@@ -504,7 +467,7 @@ def show_demand_analysis():
     )
 
 analysis_button = tk.Button(
-    analysis_frame,
+    window,
     text = "Show Demmand Analysis",
     command = show_demand_analysis
 )
@@ -560,22 +523,22 @@ def show_monthly_demand():
     )
 
 monthly_button = tk.Button(
-    analysis_frame,
+    window,
     text = "Monthly Demand",
     command = show_monthly_demand
 )
-monthly_button.pack(side = "left",padx=5)
+monthly_button.pack(pady=5)
 
 product_demand_button = tk.Button(
-    analysis_frame,
+    window,
     text="Product Demand",
     command=show_product_demand
 )
 
-product_demand_button.pack(side = "left", padx=5)
+product_demand_button.pack(pady=5)
 
-analysis_button.pack(side = "left", padx = 5)
-show_all_button.pack(side = "left", padx=5)
+analysis_button.pack(pady = 10)
+show_all_button.pack(pady=5)
 
 
 window.mainloop()
