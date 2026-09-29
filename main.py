@@ -32,6 +32,7 @@ from visualizer import(
     product_demand_chart,
     monthly_demand_chart
 )
+from datetime import datetime
 
 # orders = load_orders()
 
@@ -76,44 +77,70 @@ from visualizer import(
 # ))
 
 def add_order_from_gui():
-    product = product_entry.get()
-    category = category_entry.get()
-    date = date_entry.get()
-    quantity_text = quantity_entry.get()
+    product = product_entry.get().strip()
+    category = category_entry.get().strip()
+    date = date_entry.get().strip()
+    quantity_text = quantity_entry.get().strip()
 
     try:
         # Check empty fields
         if product == "" or category == "" or date == "" or quantity_text == "":
-            print("Please fill all fields.")
+            messagebox.showwarning(
+                "Input Error",
+                "Please fill all fields."
+            )
             return
 
-        # Convert quantity to integer
+        # Check date format
+        datetime.strptime(date, "%d-%m-%Y")
+
+        # Check quantity
         quantity = int(quantity_text)
 
-        # Check positive quantity
         if quantity <= 0:
-            print("Quantity must be greater than 0.")
+            messagebox.showwarning(
+                "Input Error",
+                "Quantity must be greater than 0."
+            )
             return
 
-        add_order(
+        # Add order
+        success = add_order(
             date,
             product,
             category,
             quantity
         )
 
-        load_table()
+        if success:
+            load_table()
 
-        # Clear fields
-        product_entry.delete(0, tk.END)
-        category_entry.delete(0, tk.END)
-        date_entry.delete(0, tk.END)
-        quantity_entry.delete(0, tk.END)
+            product_entry.delete(0, tk.END)
+            category_entry.delete(0, tk.END)
+            date_entry.delete(0, tk.END)
+            quantity_entry.delete(0, tk.END)
 
-        print("Order added successfully.")
+            messagebox.showinfo(
+                "Success",
+                "Order added successfully."
+            )
+        else:
+            messagebox.showerror(
+                "Error",
+                "Could not add the order."
+            )
 
     except ValueError:
-        print("Quantity must be a number.")
+        messagebox.showwarning(
+            "Input Error",
+            "Please enter a valid date (DD-MM-YYYY) and quantity."
+        )
+
+    except Exception as e:
+        messagebox.showerror(
+            "Error",
+            f"Something went wrong:\n{e}"
+        )
 
 window = tk.Tk()
 window.title("Retail Product Demand Analyzer")
@@ -316,7 +343,7 @@ def show_monthly_chart():
         return
 
     monthly_demand_chart(orders)
-    
+
 product1_label = tk.Label(
     window,
     text="Product 1:"
