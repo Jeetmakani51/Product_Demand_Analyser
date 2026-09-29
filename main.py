@@ -28,6 +28,10 @@ from analyzer import (
 )
 import tkinter as tk
 from tkinter import ttk, messagebox
+from visualizer import(
+    product_demand_chart,
+    monthly_demand_chart
+)
 
 # orders = load_orders()
 
@@ -288,6 +292,31 @@ def show_product_comparison():
         message
     )
 
+def show_product_chart():
+    orders = load_orders()
+
+    if orders.empty:
+        messagebox.showinfo(
+            "Product Demand Chart",
+            "No orders available."
+        )
+        return
+
+    product_demand_chart(orders)
+
+
+def show_monthly_chart():
+    orders = load_orders()
+
+    if orders.empty:
+        messagebox.showinfo(
+            "Monthly Demand Chart",
+            "No orders available."
+        )
+        return
+
+    monthly_demand_chart(orders)
+    
 product1_label = tk.Label(
     window,
     text="Product 1:"
@@ -322,6 +351,22 @@ compare_button = tk.Button(
 
 compare_button.pack(pady=5)
 
+product_chart_button = tk.Button(
+    window,
+    text="Product Demand Chart",
+    command=show_product_chart
+)
+
+product_chart_button.pack(pady=5)
+
+
+monthly_chart_button = tk.Button(
+    window,
+    text="Monthly Demand Chart",
+    command=show_monthly_chart
+)
+
+monthly_chart_button.pack(pady=5)
 #orders table
 table = ttk.Treeview(
     window, 
@@ -467,5 +512,6 @@ product_demand_button.pack(pady=5)
 
 analysis_button.pack(pady = 10)
 show_all_button.pack(pady=5)
+
 
 window.mainloop()
