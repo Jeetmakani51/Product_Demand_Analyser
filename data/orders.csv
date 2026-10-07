@@ -22,3 +22,5 @@ Order_ID,Date,Product,Category,Quantity
 19,12-10-2026,Bread,Bakery,25
 20,18-10-2026,Oil,Grocery,20
 21,25-10-2026,Rice,Grocery,45
+22,07-10-2026,Butter,Dairy,2
+23,07-10-2026,Cheese,Dairy,2

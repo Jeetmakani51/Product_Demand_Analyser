@@ -142,114 +142,26 @@ def add_order_from_gui():
             f"Something went wrong:\n{e}"
         )
 
-window = tk.Tk()
-window.title("Retail Product Demand Analyzer")
-window.geometry("2000x1500")
-title = tk.Label(
-    window,
-    text = "Retail Product Demand Analyzer",
-    font = ("Arial", 20, "bold")
-)
-title.pack(pady=20)
 
-# Main sections
 
-top_frame = tk.Frame(window)
-top_frame.pack(pady=10)
-
-order_frame = tk.LabelFrame(
-    top_frame,
-    text="Add Order",
-    padx=20,
-    pady=10
-)
-order_frame.pack(side="left", padx=20)
-
-search_frame = tk.LabelFrame(
-    top_frame,
-    text="Search & Filter",
-    padx=20,
-    pady=10
-)
-search_frame.pack(side="left", padx=20)
-
-analysis_frame = tk.LabelFrame(
-    window,
-    text="Analysis & Reports",
-    padx=20,
-    pady=10
-)
-analysis_frame.pack(pady=10)
-
-table_frame = tk.Frame(window)
-table_frame.pack(
-    padx=20,
-    pady=10,
-    fill="both",
-    expand=True
-)
-
-#product
-product_label = tk.Label(order_frame, text="Product: ")
-product_label.pack()
-
-product_entry = tk.Entry(order_frame, width = "40")
-product_entry.pack(pady = 5)
-
-#category
-category_label = tk.Label(order_frame, text = "Category: ")
-category_label.pack()
-
-category_entry = tk.Entry(order_frame, width = "40")
-category_entry.pack(pady = 5)
-
-#date
-date_label = tk.Label(order_frame, text = "Date(DD/MM/YY): ")
-date_label.pack()
-
-date_entry = tk.Entry(order_frame, width = "40")
-date_entry.pack(pady = 5)
-
-#quantity
-quantity_label = tk.Label(order_frame, text = "Quantity: ")
-quantity_label.pack()
-
-quantity_entry = tk.Entry(order_frame, width = "40")
-quantity_entry.pack(pady = 5)
-
-add_button = tk.Button(order_frame, text = "Add order", command=add_order_from_gui)
-add_button.pack(pady = 15)
-
-#category
-category_filter_label = tk.Label(
-    search_frame,
-    text="Filter Category:"
-)
-
-category_filter_label.pack()
-
-category_filter_entry = tk.Entry(
-    search_frame,
-    width=30
-)
-
-category_filter_entry.pack(pady=5)
+#filter and search
 
 def filter_category_orders():
-    category = category_filter_entry.get()
+    category = category_filter_entry.get().strip()
+
+    if category == "":
+        messagebox.showwarning(
+            "Input Required",
+            "Please enter a category."
+        )
+        return
 
     orders = load_orders()
+    result = filter_category(orders, category)
 
-    result = filter_category(
-        orders,
-        category
-    )
-
-    # Clear table
     for row in table.get_children():
         table.delete(row)
 
-    # Display filtered results
     for _, order in result.iterrows():
         table.insert(
             "",
@@ -263,41 +175,23 @@ def filter_category_orders():
             )
         )
 
-filter_button = tk.Button(
-    search_frame,
-    text="Filter",
-    command=filter_category_orders
-)
-
-filter_button.pack(pady=5)
-
-#search
-search_label = tk.Label(
-    search_frame, text = "Search Product:"
-)
-
-search_label.pack()
-search_entry = tk.Entry(
-    search_frame,
-    width=30
-)
-search_entry.pack(pady=5)
 
 def search_orders():
-    product_name = search_entry.get()
+    product_name = search_entry.get().strip()
+
+    if product_name == "":
+        messagebox.showwarning(
+            "Input Required",
+            "Please enter a product name."
+        )
+        return
 
     orders = load_orders()
+    result = search_product(orders, product_name)
 
-    result = search_product(
-        orders,
-        product_name
-    )
-
-    # Clear table
     for row in table.get_children():
         table.delete(row)
 
-    # Display search results
     for _, order in result.iterrows():
         table.insert(
             "",
@@ -311,15 +205,9 @@ def search_orders():
             )
         )
 
-search_button = tk.Button(
-    search_frame,
-    text="Search",
-    command=search_orders
-)
 
-search_button.pack(pady=5)
+#analysis functions
 
-#comparison
 def show_product_comparison():
     orders = load_orders()
 
@@ -330,8 +218,8 @@ def show_product_comparison():
         )
         return
 
-    product1 = product1_entry.get()
-    product2 = product2_entry.get()
+    product1 = product1_entry.get().strip()
+    product2 = product2_entry.get().strip()
 
     if product1 == "" or product2 == "":
         messagebox.showwarning(
@@ -347,14 +235,15 @@ def show_product_comparison():
     )
 
     message = (
-        f"{product1} Demand : {demand1}\n"
-        f"{product2} Demand : {demand2}"
+        f"{product1} Demand: {demand1}\n"
+        f"{product2} Demand: {demand2}"
     )
 
     messagebox.showinfo(
         "Product Comparison",
         message
     )
+
 
 def show_product_chart():
     orders = load_orders()
@@ -381,97 +270,6 @@ def show_monthly_chart():
 
     monthly_demand_chart(orders)
 
-product1_label = tk.Label(
-    analysis_frame,
-    text="Product 1:"
-)
-product1_label.pack()
-
-product1_entry = tk.Entry(
-    analysis_frame,
-    width=30
-)
-product1_entry.pack(pady=5)
-
-
-product2_label = tk.Label(
-    analysis_frame,
-    text="Product 2:"
-)
-product2_label.pack()
-
-product2_entry = tk.Entry(
-    analysis_frame,
-    width=30
-)
-product2_entry.pack(pady=5)
-
-
-compare_button = tk.Button(
-    analysis_frame,
-    text="Compare Products",
-    command=show_product_comparison
-)
-
-compare_button.pack(pady=5)
-
-product_chart_button = tk.Button(
-    analysis_frame,
-    text="Product Demand Chart",
-    command=show_product_chart
-)
-
-product_chart_button.pack(side = "left", padx=5)
-
-
-monthly_chart_button = tk.Button(
-    analysis_frame,
-    text="Monthly Demand Chart",
-    command=show_monthly_chart
-)
-
-monthly_chart_button.pack(side = "left", padx=5)
-#orders table
-table = ttk.Treeview(
-    table_frame, 
-    columns = ("ID", "Date", "Product", "Category", "Quantity"),
-    show="headings"
-)
-
-table.heading("ID", text = "Order ID")
-table.heading("Date", text = "Date")
-table.heading("Product", text = "Product")
-table.heading("Category", text = "Category")
-table.heading("Quantity", text = "Quantity")
-
-table.pack(fill="both", expand=True)
-
-
-def load_table():
-    orders = load_orders()
-
-    # Remove old rows
-    for row in table.get_children():
-        table.delete(row)
-
-    # Add orders to table
-    for _, order in orders.iterrows():
-        table.insert(
-            "",
-            "end",
-            values=(
-                order["Order_ID"],
-                order["Date"],
-                order["Product"],
-                order["Category"],
-                order["Quantity"]
-            )
-        )
-show_all_button = tk.Button(
-    analysis_frame,
-    text="Show All",
-    command = load_table
-)
 
 def show_demand_analysis():
     orders = load_orders()
@@ -486,16 +284,16 @@ def show_demand_analysis():
     total = total_demand(orders)
     average = avg_demand(orders)
 
-    heighest = highest_demand_product(orders)
+    highest = highest_demand_product(orders)
     lowest = lowest_demand_product(orders)
 
     message = (
-        f"Total Demand : {total}\n"
-        f"Average Demand : {average: .2f}\n\n"
-        f"Highest Demand Product : {heighest[0]}\n"
-        f"Highest Demand : {heighest[1]}\n\n"
-        f"Lowest Demand Product : {lowest[0]}\n"
-        f"Lowest Demand : {lowest[1]}\n"
+        f"Total Demand: {total}\n"
+        f"Average Demand: {average:.2f}\n\n"
+        f"Highest Demand Product: {highest[0]}\n"
+        f"Highest Demand: {highest[1]}\n\n"
+        f"Lowest Demand Product: {lowest[0]}\n"
+        f"Lowest Demand: {lowest[1]}"
     )
 
     messagebox.showinfo(
@@ -503,13 +301,7 @@ def show_demand_analysis():
         message
     )
 
-analysis_button = tk.Button(
-    analysis_frame,
-    text = "Show Demmand Analysis",
-    command = show_demand_analysis
-)
 
-#product demand
 def show_product_demand():
     orders = load_orders()
 
@@ -529,7 +321,7 @@ def show_product_demand():
         table.insert(
             "",
             "end",
-            values = (
+            values=(
                 "",
                 "",
                 product,
@@ -538,44 +330,600 @@ def show_product_demand():
             )
         )
 
-#monthly demand
+
 def show_monthly_demand():
     orders = load_orders()
+
     if orders.empty:
         messagebox.showinfo(
             "Monthly Demand",
-            "No orders available"
+            "No orders available."
         )
         return
 
     monthly = monthly_demand(orders)
+
     message = "Monthly Demand\n\n"
 
     for month, quantity in monthly.items():
-        message += f"{month} : {quantity}\n"
+        message += f"{month}: {quantity}\n"
 
     messagebox.showinfo(
         "Monthly Demand",
         message
     )
 
-monthly_button = tk.Button(
-    analysis_frame,
-    text = "Monthly Demand",
-    command = show_monthly_demand
+
+#GUI
+
+window = tk.Tk()
+window.title("Retail Demand Analyzer")
+window.geometry("1200x800")
+window.minsize(1000, 700)
+
+# ---------- Styling ----------
+
+style = ttk.Style()
+style.configure("Treeview", rowheight=28, font=("Arial", 10))
+style.configure("Treeview.Heading", font=("Arial", 10, "bold"))
+
+# ---------- Main Container ----------
+
+main_frame = tk.Frame(window, padx=20, pady=15)
+main_frame.pack(fill="both", expand=True)
+
+# ---------- Title ----------
+
+title = tk.Label(
+    main_frame,
+    text="Retail Demand Analyzer",
+    font=("Arial", 24, "bold")
 )
-monthly_button.pack(side = "left",padx=5)
+title.pack(pady=(0, 3))
+
+subtitle = tk.Label(
+    main_frame,
+    text="Retail sales analysis and demand reporting system",
+    font=("Arial", 11)
+)
+subtitle.pack(pady=(0, 12))
+
+
+#top section
+
+top_frame = tk.Frame(main_frame)
+top_frame.pack(fill="x", pady=5)
+
+# ---------- Add Order ----------
+
+order_frame = tk.LabelFrame(
+    top_frame,
+    text="Add Order",
+    padx=18,
+    pady=12,
+    font=("Arial", 10, "bold")
+)
+order_frame.pack(side="left", fill="both", expand=True, padx=(0, 8))
+
+product_label = tk.Label(order_frame, text="Product:")
+product_label.grid(row=0, column=0, sticky="w", pady=5)
+
+product_entry = tk.Entry(order_frame, width=28)
+product_entry.grid(row=0, column=1, padx=10, pady=5)
+
+category_label = tk.Label(order_frame, text="Category:")
+category_label.grid(row=1, column=0, sticky="w", pady=5)
+
+category_entry = tk.Entry(order_frame, width=28)
+category_entry.grid(row=1, column=1, padx=10, pady=5)
+
+date_label = tk.Label(
+    order_frame,
+    text="Date (DD-MM-YYYY):"
+)
+date_label.grid(row=2, column=0, sticky="w", pady=5)
+
+date_entry = tk.Entry(order_frame, width=28)
+date_entry.grid(row=2, column=1, padx=10, pady=5)
+
+quantity_label = tk.Label(order_frame, text="Quantity:")
+quantity_label.grid(row=3, column=0, sticky="w", pady=5)
+
+quantity_entry = tk.Entry(order_frame, width=28)
+quantity_entry.grid(row=3, column=1, padx=10, pady=5)
+
+add_button = tk.Button(
+    order_frame,
+    text="Add Order",
+    command=add_order_from_gui,
+    width=18
+)
+add_button.grid(
+    row=4,
+    column=0,
+    columnspan=2,
+    pady=(10, 0)
+)
+
+
+# ---------- Search & Filter ----------
+
+search_frame = tk.LabelFrame(
+    top_frame,
+    text="Search & Filter",
+    padx=18,
+    pady=12,
+    font=("Arial", 10, "bold")
+)
+search_frame.pack(side="left", fill="both", expand=True, padx=(8, 0))
+
+category_filter_label = tk.Label(
+    search_frame,
+    text="Filter Category:"
+)
+category_filter_label.grid(
+    row=0,
+    column=0,
+    sticky="w",
+    pady=5
+)
+
+category_filter_entry = tk.Entry(
+    search_frame,
+    width=28
+)
+category_filter_entry.grid(
+    row=0,
+    column=1,
+    padx=10,
+    pady=5
+)
+
+filter_button = tk.Button(
+    search_frame,
+    text="Filter",
+    command=filter_category_orders,
+    width=12
+)
+filter_button.grid(
+    row=0,
+    column=2,
+    padx=5
+)
+
+search_label = tk.Label(
+    search_frame,
+    text="Search Product:"
+)
+search_label.grid(
+    row=1,
+    column=0,
+    sticky="w",
+    pady=5
+)
+
+search_entry = tk.Entry(
+    search_frame,
+    width=28
+)
+search_entry.grid(
+    row=1,
+    column=1,
+    padx=10,
+    pady=5
+)
+
+search_button = tk.Button(
+    search_frame,
+    text="Search",
+    command=search_orders,
+    width=12
+)
+search_button.grid(
+    row=1,
+    column=2,
+    padx=5
+)
+
+
+#analysis and reports
+
+analysis_frame = tk.LabelFrame(
+    main_frame,
+    text="Analysis & Reports",
+    padx=12,
+    pady=10,
+    font=("Arial", 10, "bold")
+)
+analysis_frame.pack(fill="x", pady=10)
+
+# ---------- Product Comparison ----------
+
+comparison_frame = tk.Frame(analysis_frame)
+comparison_frame.pack(pady=(0, 8))
+
+product1_label = tk.Label(
+    comparison_frame,
+    text="Product 1:"
+)
+product1_label.grid(row=0, column=0, padx=5)
+
+product1_entry = tk.Entry(
+    comparison_frame,
+    width=18
+)
+product1_entry.grid(row=0, column=1, padx=5)
+
+product2_label = tk.Label(
+    comparison_frame,
+    text="Product 2:"
+)
+product2_label.grid(row=0, column=2, padx=5)
+
+product2_entry = tk.Entry(
+    comparison_frame,
+    width=18
+)
+product2_entry.grid(row=0, column=3, padx=5)
+
+compare_button = tk.Button(
+    comparison_frame,
+    text="Compare Products",
+    command=show_product_comparison
+)
+compare_button.grid(row=0, column=4, padx=10)
+
+# ---------- Analysis Buttons ----------
+
+button_frame = tk.Frame(analysis_frame)
+button_frame.pack()
+
+monthly_button = tk.Button(
+    button_frame,
+    text="Monthly Demand",
+    command=show_monthly_demand,
+    width=18
+)
+monthly_button.grid(row=0, column=0, padx=4, pady=4)
 
 product_demand_button = tk.Button(
-    analysis_frame,
+    button_frame,
     text="Product Demand",
-    command=show_product_demand
+    command=show_product_demand,
+    width=18
+)
+product_demand_button.grid(row=0, column=1, padx=4, pady=4)
+
+analysis_button = tk.Button(
+    button_frame,
+    text="Demand Analysis",
+    command=show_demand_analysis,
+    width=18
+)
+analysis_button.grid(row=0, column=2, padx=4, pady=4)
+
+product_chart_button = tk.Button(
+    button_frame,
+    text="Product Demand Chart",
+    command=show_product_chart,
+    width=20
+)
+product_chart_button.grid(row=1, column=0, padx=4, pady=4)
+
+monthly_chart_button = tk.Button(
+    button_frame,
+    text="Monthly Demand Chart",
+    command=show_monthly_chart,
+    width=20
+)
+monthly_chart_button.grid(row=1, column=1, padx=4, pady=4)
+
+show_all_button = tk.Button(
+    button_frame,
+    text="Show All Orders",
+    command=lambda: load_table(),
+    width=18
+)
+show_all_button.grid(row=1, column=2, padx=4, pady=4)
+
+
+#order table
+
+table_frame = tk.LabelFrame(
+    main_frame,
+    text="Order Data",
+    padx=8,
+    pady=8,
+    font=("Arial", 10, "bold")
+)
+table_frame.pack(
+    fill="both",
+    expand=True
 )
 
-product_demand_button.pack(side = "left", padx=5)
+table_scrollbar = ttk.Scrollbar(
+    table_frame,
+    orient="vertical"
+)
 
-analysis_button.pack(side = "left", padx = 5)
-show_all_button.pack(side = "left", padx=5)
+table_horizontal_scrollbar = ttk.Scrollbar(
+    table_frame,
+    orient="horizontal"
+)
 
+table = ttk.Treeview(
+    table_frame,
+    columns=("ID", "Date", "Product", "Category", "Quantity"),
+    show="headings",
+    yscrollcommand=table_scrollbar.set,
+    xscrollcommand=table_horizontal_scrollbar.set
+)
+
+table_scrollbar.config(command=table.yview)
+table_horizontal_scrollbar.config(command=table.xview)
+
+table.heading("ID", text="Order ID")
+table.heading("Date", text="Date")
+table.heading("Product", text="Product")
+table.heading("Category", text="Category")
+table.heading("Quantity", text="Quantity")
+
+table.column("ID", width=100, anchor="center")
+table.column("Date", width=150, anchor="center")
+table.column("Product", width=200)
+table.column("Category", width=180)
+table.column("Quantity", width=120, anchor="center")
+
+table_scrollbar.pack(
+    side="right",
+    fill="y"
+)
+
+table_horizontal_scrollbar.pack(
+    side="bottom",
+    fill="x"
+)
+
+table.pack(
+    side="left",
+    fill="both",
+    expand=True
+)
+
+#filter / search 
+
+def filter_category_orders():
+    category = category_filter_entry.get().strip()
+
+    if category == "":
+        messagebox.showwarning(
+            "Input Required",
+            "Please enter a category."
+        )
+        return
+
+    orders = load_orders()
+    result = filter_category(orders, category)
+
+    for row in table.get_children():
+        table.delete(row)
+
+    for _, order in result.iterrows():
+        table.insert(
+            "",
+            "end",
+            values=(
+                order["Order_ID"],
+                order["Date"],
+                order["Product"],
+                order["Category"],
+                order["Quantity"]
+            )
+        )
+
+
+def search_orders():
+    product_name = search_entry.get().strip()
+
+    if product_name == "":
+        messagebox.showwarning(
+            "Input Required",
+            "Please enter a product name."
+        )
+        return
+
+    orders = load_orders()
+    result = search_product(orders, product_name)
+
+    for row in table.get_children():
+        table.delete(row)
+
+    for _, order in result.iterrows():
+        table.insert(
+            "",
+            "end",
+            values=(
+                order["Order_ID"],
+                order["Date"],
+                order["Product"],
+                order["Category"],
+                order["Quantity"]
+            )
+        )
+
+
+#analysis functions
+
+def show_product_comparison():
+    orders = load_orders()
+
+    if orders.empty:
+        messagebox.showinfo(
+            "Product Comparison",
+            "No orders available."
+        )
+        return
+
+    product1 = product1_entry.get().strip()
+    product2 = product2_entry.get().strip()
+
+    if product1 == "" or product2 == "":
+        messagebox.showwarning(
+            "Input Required",
+            "Please enter both product names."
+        )
+        return
+
+    demand1, demand2 = compare_products(
+        orders,
+        product1,
+        product2
+    )
+
+    message = (
+        f"{product1} Demand: {demand1}\n"
+        f"{product2} Demand: {demand2}"
+    )
+
+    messagebox.showinfo(
+        "Product Comparison",
+        message
+    )
+
+
+def show_product_chart():
+    orders = load_orders()
+
+    if orders.empty:
+        messagebox.showinfo(
+            "Product Demand Chart",
+            "No orders available."
+        )
+        return
+
+    product_demand_chart(orders)
+
+
+def show_monthly_chart():
+    orders = load_orders()
+
+    if orders.empty:
+        messagebox.showinfo(
+            "Monthly Demand Chart",
+            "No orders available."
+        )
+        return
+
+    monthly_demand_chart(orders)
+
+
+def show_demand_analysis():
+    orders = load_orders()
+
+    if orders.empty:
+        messagebox.showinfo(
+            "Demand Analysis",
+            "No orders available."
+        )
+        return
+
+    total = total_demand(orders)
+    average = avg_demand(orders)
+
+    highest = highest_demand_product(orders)
+    lowest = lowest_demand_product(orders)
+
+    message = (
+        f"Total Demand: {total}\n"
+        f"Average Demand: {average:.2f}\n\n"
+        f"Highest Demand Product: {highest[0]}\n"
+        f"Highest Demand: {highest[1]}\n\n"
+        f"Lowest Demand Product: {lowest[0]}\n"
+        f"Lowest Demand: {lowest[1]}"
+    )
+
+    messagebox.showinfo(
+        "Demand Analysis",
+        message
+    )
+
+
+def show_product_demand():
+    orders = load_orders()
+
+    if orders.empty:
+        messagebox.showinfo(
+            "Product Demand",
+            "No orders available."
+        )
+        return
+
+    demand = product_demand(orders)
+
+    for row in table.get_children():
+        table.delete(row)
+
+    for product, quantity in demand.items():
+        table.insert(
+            "",
+            "end",
+            values=(
+                "",
+                "",
+                product,
+                "",
+                quantity
+            )
+        )
+
+
+def show_monthly_demand():
+    orders = load_orders()
+
+    if orders.empty:
+        messagebox.showinfo(
+            "Monthly Demand",
+            "No orders available."
+        )
+        return
+
+    monthly = monthly_demand(orders)
+
+    message = "Monthly Demand\n\n"
+
+    for month, quantity in monthly.items():
+        message += f"{month}: {quantity}\n"
+
+    messagebox.showinfo(
+        "Monthly Demand",
+        message
+    )
+
+
+# table function
+
+def load_table():
+    orders = load_orders()
+
+    for row in table.get_children():
+        table.delete(row)
+
+    for _, order in orders.iterrows():
+        table.insert(
+            "",
+            "end",
+            values=(
+                order["Order_ID"],
+                order["Date"],
+                order["Product"],
+                order["Category"],
+                order["Quantity"]
+            )
+        )
+
+
+# start app
+
+load_table()
 
 window.mainloop()
